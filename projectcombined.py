@@ -79,9 +79,10 @@ def find_date(limited_id):
         else:
             dates.append("unknown")
     for x in dates:
-        if "th century" in x:
-            if "2" in x:
+        if "nd century":
+             if "2" in x:
                 x = "150"
+        if "th century" in x:
             if "3" in x:
                 x = "250"
             if "4" in x:
@@ -205,7 +206,12 @@ def createtable(cur, conn):
     conn.commit()
 
 def add_info(all_info, unique_origin, unique_credit, cur, conn):
-    for list in all_info:
+    try:
+        start = cur.fetchone()
+        start = start[0]
+    except:
+        start = 0
+    for list in all_info[start: start + 25]:
         cur.execute('INSERT OR IGNORE INTO met (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
 def add_country(country_lst, cur, conn):  
@@ -223,7 +229,12 @@ def add_credit(credit_lst, cur, conn):
 
 
 def add_info_chic(chicago, unique_origin, unique_credit, cur, conn):
-    for list in chicago:
+    try:
+        start = cur.fetchone()
+        start = start[0]
+    except:
+        start = 0
+    for list in chicago[start: start + 25]:
         cur.execute('INSERT OR IGNORE INTO chicagodata (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
 
@@ -332,14 +343,14 @@ for idx in range(len(origin_place_list)):
 
 
 # Making data table
-filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
-writer=csv.writer(filename)    
-data=load['data']
-header=["Place of Origin","Date","Credit"]
-writer=csv.writer(filename, delimiter=",")
-writer.writerow(header)
-for x in lst_combined:
-    writer.writerow(x)
+# filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
+# writer=csv.writer(filename)    
+# data=load['data']
+# header=["Place of Origin","Date","Credit"]
+# writer=csv.writer(filename, delimiter=",")
+# writer.writerow(header)
+# for x in lst_combined:
+#     writer.writerow(x)
 
 chicago = combine(origin_place_list, dates_list, credits_list)
 
