@@ -239,12 +239,37 @@ def add_info_chic(chicago, unique_origin, unique_credit, cur, conn):
     conn.commit()
 
 def select_us(cur, conn, museum):
-    # cur.execute(f'SELECT count(origin) FROM {museum} JOIN countries ON countries.country_id = origin WHERE countries.country_id="United States"')
-    cur.execute(f'SELECT {museum}.origin, countries.country FROM {museum} JOIN countries on countries.country_id = {museum}.origin WHERE countries.country_id = "United States"')
+    cur.execute(f'SELECT countries.country FROM countries JOIN {museum} ON countries.country_id = {museum}.origin WHERE countries.country="United States"')
     x = cur.fetchall()
-    print(x)
     return x
-
+def select_not_us(cur, conn, museum):
+    cur.execute(f'SELECT countries.country FROM countries JOIN {museum} ON countries.country_id = {museum}.origin WHERE countries.country!="United States"')
+    x = cur.fetchall()
+    return x
+def select_purchase(cur,conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit WHERE credit.credit = "purchase"')
+    x = cur.fetchall()
+    return x
+def select_gift(cur,conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit WHERE credit.credit = "gift"')
+    x = cur.fetchall()
+    return x
+def select_unknown(cur,conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit WHERE credit.credit = "unknown"')
+    x = cur.fetchall()
+    return x
+def select_donation(cur,conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit WHERE credit.credit = "donation"')
+    x = cur.fetchall()
+    return x
+def select_fund(cur,conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit WHERE credit.credit = "fund"')
+    x = cur.fetchall()
+    return x
+def select_all_credits(cur, conn, museum):
+    cur.execute(f'SELECT credit.credit FROM credit JOIN {museum} ON credit.credit_id = {museum}.credit')
+    x = cur.fetchall()
+    return x
 # european musueum data
 
 #open api
@@ -384,6 +409,29 @@ add_info_chic(chicago, unique_both_countries, unique_credit, cur, conn)
 add_country(unique_both_countries, cur, conn)
 # add_date(unique_dates, cur, conn)
 add_credit(unique_credit, cur, conn)
-met_test = select_us(cur,conn, "met")
-chicago_test = select_us(cur,conn, "chicagodata")
 
+# data for comparing us vs not us countries from database
+
+# met_us_origin = select_us(cur,conn, "met")
+# chicago_us_origin = select_us(cur,conn, "chicagodata")
+# met_not_us_origin = select_not_us(cur,conn, "met")
+# chicago_not_us_origin = select_not_us(cur,conn, "chicagodata")
+
+# data for comparing types of credit
+purchase_met = select_purchase(cur,conn, "met")
+purchase_chicago = select_purchase(cur,conn, "chicagodata")
+
+gift_met = select_gift(cur,conn, "met")
+gift_chicago = select_gift(cur,conn, "chicagodata")
+
+unknown_met = select_unknown(cur,conn, "met")
+unknown_chicago = select_unknown(cur,conn, "chicagodata")
+
+donation_met = select_donation(cur,conn, "met")
+donation_chicago = select_donation(cur,conn, "chicagodata")
+
+fund_met = select_fund(cur,conn, "met")
+fund_chicago = select_fund(cur,conn, "chicagodata")
+
+total_credits = select_all_credits(cur, conn, "met")
+total_credits = select_all_credits(cur, conn, "chicagodata")
