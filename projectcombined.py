@@ -231,15 +231,18 @@ def add_credit(credit_lst, cur, conn):
 def add_info_chic(chicago, unique_origin, unique_credit, cur, conn):
     cur.execute('SELECT count(origin) FROM chicagodata')
     count = cur.fetchone()
+    count = count[0]
     # count = count[0]
     print(count)
     for list in chicago[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO chicagodata (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
 
-def select_us(cur, conn):
-    cur.execute('SELECT count(met.origin) from met join countries on countries.country_id = met.origin where countries.country_id="United States"')
+def select_us(cur, conn, museum):
+    # cur.execute(f'SELECT count(origin) FROM {museum} JOIN countries ON countries.country_id = origin WHERE countries.country_id="United States"')
+    cur.execute(f'SELECT {museum}.origin, countries.country FROM {museum} JOIN countries on countries.country_id = {museum}.origin WHERE countries.country_id = "United States"')
     x = cur.fetchall()
+    print(x)
     return x
 
 # european musueum data
@@ -371,7 +374,8 @@ unique_origin = convert_set(unique_both_countries)
 unique_credit = convert_set(credit)
 
 
-# write_csv(all, "new_sample.csv")
+# write_csv(all, "met_sample.csv")
+# write_csv(chicago,"chicago_sample.csv")
 
 cur, conn = setupDataBase("met.db")
 createtable(cur, conn)
@@ -380,4 +384,6 @@ add_info_chic(chicago, unique_both_countries, unique_credit, cur, conn)
 add_country(unique_both_countries, cur, conn)
 # add_date(unique_dates, cur, conn)
 add_credit(unique_credit, cur, conn)
-us_test = select_us(cur,conn)
+met_test = select_us(cur,conn, "met")
+chicago_test = select_us(cur,conn, "chicagodata")
+
