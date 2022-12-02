@@ -200,18 +200,18 @@ def setupDataBase(db_name):
 def createtable(cur, conn):
     cur.execute('CREATE TABLE IF NOT EXISTS met (origin TEXT, date INT, credit TEXT)')
     cur.execute('CREATE TABLE IF NOT EXISTS chicagodata (origin TEXT, date INT, credit TEXT)')
-    cur.execute('CREATE TABLE IF NOT EXISTS countries (country_id INT, country TEXT)')
+    cur.execute('CREATE TABLE IF NOT EXISTS countries (country_id INT PRIMARY KEY, country TEXT)')
     # cur.execute('CREATE TABLE IF NOT EXISTS dates (dates_id INT, date INT)')
-    cur.execute('CREATE TABLE IF NOT EXISTS credit (credit_id INT, credit TEXT)')
+    cur.execute('CREATE TABLE IF NOT EXISTS credit (credit_id INT PRIMARY KEY, credit TEXT)')
     conn.commit()
 
 def add_info(all_info, unique_origin, unique_credit, cur, conn):
-    try:
-        start = cur.fetchone()
-        start = start[0]
-    except:
-        start = 0
-    for list in all_info[start: start + 25]:
+    cur.execute('SELECT count(origin) FROM met')
+    count = cur.fetchone()
+    count = count[0]
+
+    print(count)
+    for list in all_info[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO met (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
 def add_country(country_lst, cur, conn):  
@@ -229,17 +229,18 @@ def add_credit(credit_lst, cur, conn):
 
 
 def add_info_chic(chicago, unique_origin, unique_credit, cur, conn):
-    try:
-        start = cur.fetchone()
-        start = start[0]
-    except:
-        start = 0
-    for list in chicago[start: start + 25]:
+    cur.execute('SELECT count(origin) FROM chicagodata')
+    count = cur.fetchone()
+    # count = count[0]
+    print(count)
+    for list in chicago[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO chicagodata (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
 
-
-
+def select_us(cur, conn):
+    cur.execute('SELECT count(met.origin) from met join countries on countries.country_id = met.origin where countries.country_id="United States"')
+    x = cur.fetchall()
+    return x
 
 # european musueum data
 
@@ -379,3 +380,4 @@ add_info_chic(chicago, unique_both_countries, unique_credit, cur, conn)
 add_country(unique_both_countries, cur, conn)
 # add_date(unique_dates, cur, conn)
 add_credit(unique_credit, cur, conn)
+us_test = select_us(cur,conn)
