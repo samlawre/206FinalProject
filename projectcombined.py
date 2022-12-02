@@ -233,7 +233,6 @@ def add_info_chic(chicago, unique_origin, unique_credit, cur, conn):
     count = cur.fetchone()
     count = count[0]
     # count = count[0]
-    print(count)
     for list in chicago[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO chicagodata (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
@@ -412,10 +411,10 @@ add_credit(unique_credit, cur, conn)
 
 # data for comparing us vs not us countries from database
 
-# met_us_origin = select_us(cur,conn, "met")
-# chicago_us_origin = select_us(cur,conn, "chicagodata")
-# met_not_us_origin = select_not_us(cur,conn, "met")
-# chicago_not_us_origin = select_not_us(cur,conn, "chicagodata")
+met_us_origin = select_us(cur,conn, "met")
+chicago_us_origin = select_us(cur,conn, "chicagodata")
+met_not_us_origin = select_not_us(cur,conn, "met")
+chicago_not_us_origin = select_not_us(cur,conn, "chicagodata")
 
 # data for comparing types of credit
 purchase_met = select_purchase(cur,conn, "met")
@@ -433,5 +432,21 @@ donation_chicago = select_donation(cur,conn, "chicagodata")
 fund_met = select_fund(cur,conn, "met")
 fund_chicago = select_fund(cur,conn, "chicagodata")
 
-total_credits = select_all_credits(cur, conn, "met")
-total_credits = select_all_credits(cur, conn, "chicagodata")
+total_credits_met = select_all_credits(cur, conn, "met")
+total_credits_chicago = select_all_credits(cur, conn, "chicagodata")
+
+total_purchase = len(purchase_met) + len(purchase_chicago)
+total_gift = len(gift_met) + len(gift_chicago)
+total_unknown = len(unknown_met) + len(unknown_chicago)
+total_donation = len(donation_met) + len(donation_chicago)
+total_fund = len(fund_met) + len(fund_chicago)
+total_all_credits = len(total_credits_met) + len(total_credits_chicago)
+
+purchase_percent = str((total_purchase/total_all_credits) * 100) + "%"
+gift_percent = str((total_gift/total_all_credits) * 100) + "%"
+unknown_percent = str((total_unknown/total_all_credits) * 100) + "%"
+fund_percent = str((total_fund/total_all_credits) * 100) + "%"
+
+print(purchase_percent)
+print(total_purchase)
+print(total_all_credits)
