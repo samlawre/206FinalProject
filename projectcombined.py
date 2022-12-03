@@ -82,9 +82,10 @@ def find_date(limited_id):
         if "nd century":
              if "2" in x:
                 x = "150"
-        if "th century" in x:
+        if "rd century":
             if "3" in x:
                 x = "250"
+        if "th century" in x:
             if "4" in x:
                 x = "350"
             if "5" in x:
@@ -210,7 +211,7 @@ def add_info(all_info, unique_origin, unique_credit, cur, conn):
     count = cur.fetchone()
     count = count[0]
 
-    print(count)
+    # print(count)
     for list in all_info[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO met (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
     conn.commit()
@@ -361,7 +362,7 @@ for x in data:
     elif 'bequest' in credit.lower():
         credits_list.append("donation")
     else:
-        credits_list.append(credit)
+        credits_list.append('unknown')
 # print(credits_list)
 
 # Combining the data based on index
@@ -371,14 +372,14 @@ for idx in range(len(origin_place_list)):
 
 
 # Making data table
-# filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
-# writer=csv.writer(filename)    
-# data=load['data']
-# header=["Place of Origin","Date","Credit"]
-# writer=csv.writer(filename, delimiter=",")
-# writer.writerow(header)
-# for x in lst_combined:
-#     writer.writerow(x)
+filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
+writer=csv.writer(filename)    
+data=load['data']
+header=["Place of Origin","Date","Credit"]
+writer=csv.writer(filename, delimiter=",")
+writer.writerow(header)
+for x in lst_combined:
+    writer.writerow(x)
 
 chicago = combine(origin_place_list, dates_list, credits_list)
 
