@@ -372,14 +372,14 @@ for idx in range(len(origin_place_list)):
 
 
 # Making data table
-filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
-writer=csv.writer(filename)    
-data=load['data']
-header=["Place of Origin","Date","Credit"]
-writer=csv.writer(filename, delimiter=",")
-writer.writerow(header)
-for x in lst_combined:
-    writer.writerow(x)
+# filename=open('/Users/samlawrence/Desktop/Final Project 206/data_chicago.csv', 'w')
+# writer=csv.writer(filename)    
+# data=load['data']
+# header=["Place of Origin","Date","Credit"]
+# writer=csv.writer(filename, delimiter=",")
+# writer.writerow(header)
+# for x in lst_combined:
+#     writer.writerow(x)
 
 chicago = combine(origin_place_list, dates_list, credits_list)
 
@@ -417,6 +417,11 @@ chicago_us_origin = select_us(cur,conn, "chicagodata")
 met_not_us_origin = select_not_us(cur,conn, "met")
 chicago_not_us_origin = select_not_us(cur,conn, "chicagodata")
 
+num_met_us_origin = len(met_us_origin)
+num_chicago_us_origin = len(chicago_us_origin)
+num_met_not_us_origin = len(met_not_us_origin)
+num_chicago_not_us_origin = len(chicago_not_us_origin)
+
 # data for comparing types of credit
 purchase_met = select_purchase(cur,conn, "met")
 purchase_chicago = select_purchase(cur,conn, "chicagodata")
@@ -443,11 +448,65 @@ total_donation = len(donation_met) + len(donation_chicago)
 total_fund = len(fund_met) + len(fund_chicago)
 total_all_credits = len(total_credits_met) + len(total_credits_chicago)
 
-purchase_percent = str((total_purchase/total_all_credits) * 100) + "%"
-gift_percent = str((total_gift/total_all_credits) * 100) + "%"
-unknown_percent = str((total_unknown/total_all_credits) * 100) + "%"
-fund_percent = str((total_fund/total_all_credits) * 100) + "%"
+purchase_percent = str(round((total_purchase/total_all_credits) * 100, 2)) + "%"
+gift_percent = str(round((total_gift/total_all_credits) * 100, 2)) + "%"
+unknown_percent = str(round((total_unknown/total_all_credits) * 100, 2)) + "%"
+donation_percent = str(round((total_donation/total_all_credits) * 100, 2)) + "%"
+fund_percent = str(round((total_fund/total_all_credits) * 100, 2))+ "%"
 
 print(purchase_percent)
 print(total_purchase)
 print(total_all_credits)
+
+def calculated_data(num_met_us_origin, num_chicago_us_origin, num_met_not_us_origin, num_chicago_not_us_origin, filename):
+    f = open(filename, "w")
+    f.write("Number of pieces produced in the United States vs outside the United States")
+    f.write("\n")
+    f.write("Met pieces from the United States: " + str(num_met_us_origin))
+    f.write("\n")
+    f.write("Met pieces from outside the United States: " + str(num_met_not_us_origin))
+    f.write("\n")
+    f.write("Art Institute of Chicago pieces from the United States: " + str(num_chicago_us_origin))
+    f.write("\n")
+    f.write("Art Institute of Chicago pieces from outside the United States: " + str(num_chicago_not_us_origin))
+    f.close()
+    return None
+
+def credit_type_percentage(purchase, gift, unknown, donated, fund, filename):
+    f = open(filename, "w")
+    f.write("Percentage of each type of credit for all art pieces")
+    f.write("\n")
+    f.write("Art pieces that were purchased: " + purchase)
+    f.write("\n")
+    f.write("Art pieces that were gifted: " + gift)
+    f.write("\n")
+    f.write("Art pieces that have unknown credit: " + unknown)
+    f.write("\n")
+    f.write("Art pieces that were donated: " + donated)
+    f.write("\n")
+    f.write("Art pieces that were given through a fund: " + fund)
+    f.close()
+    return None
+calculated_data(num_met_us_origin, num_chicago_us_origin, num_met_not_us_origin, num_chicago_not_us_origin, "us_vs_outside.txt")
+credit_type_percentage(purchase_percent, gift_percent, unknown_percent, donation_percent, fund_percent, "credit_type.txt")
+
+x_values = ["Art created in the U.S", "Art created outside the U.S"]
+y_values_met = [num_met_us_origin, num_met_not_us_origin]
+y_values_chicago = [num_chicago_us_origin, num_chicago_not_us_origin]
+
+import plotly.graph_objects as go
+fig = go.Figure(
+    data = [
+        go.Bar(name = "MET Art", x = x_values, y = y_values_met),
+        go.Bar(name = "AIC Art", x = x_values, y = y_values_chicago)],
+        layout = dict(title = dict(text = "Number of pieces produced in the United States vs outside the United States"))
+        )
+fig.update_layout(barmode = "group")
+fig.show()
+
+label_lst = ["Purchased", "Gifted", "Unknown", "Donated", "Fund"]
+value_lst = [total_purchase, total_gift, total_unknown, total_donation, total_fund]
+fig_pie = go.Figure(data = [go.Pie(labels = label_lst, values = value_lst)])
+title_str = "Percentage of each type of credit for all art pieces"
+fig_pie.update_layout(title = title_str)
+fig_pie.show()
