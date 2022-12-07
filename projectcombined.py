@@ -122,6 +122,8 @@ def find_date(limited_id):
                 x = "1950"
         if x == "unknown":
             x = 0
+        else:
+            x = 0
         x = int(x)
         final_dates.append(x)
     return final_dates
@@ -169,20 +171,20 @@ def combine(origin_lst, date_lst, credit_lst):
     return all_info
 
 
-def write_csv(data, filename):
-    f = open(filename, "w")
-    header = ["Place of Origin", "Date", "Credit", "Materials"]
-    for x in header[0:-1]:
-        f.write(x + ", ")
-    f.write(header[-1])
-    f.write("\n")
-    for list in data:
-        for x in list[0:-1]:
-            f.write(str(x) + ", ")
-        f.write(str(list[-1][0]))
-        f.write("\n")
-    f.close()
-    return None
+# def write_csv(data, filename):
+#     f = open(filename, "w")
+#     header = ["Place of Origin", "Date", "Credit", "Materials"]
+#     for x in header[0:-1]:
+#         f.write(x + ", ")
+#     f.write(header[-1])
+#     f.write("\n")
+#     for list in data:
+#         for x in list[0:-1]:
+#             f.write(str(x) + ", ")
+#         f.write(str(list[-1][0]))
+#         f.write("\n")
+#     f.close()
+#     return None
 
 def total_countries(met_origin, chicago_origin):
     both_countries = []
@@ -214,7 +216,7 @@ def add_info(all_info, unique_origin, unique_credit, cur, conn):
     # print(count)
     for list in all_info[count: count+25]:
         cur.execute('INSERT OR IGNORE INTO met (origin, date, credit) VALUES (?, ?, ?)', (unique_origin.index(list[0]), list[1], unique_credit.index(list[2])))
-    conn.commit()
+    conn.commit
 def add_country(country_lst, cur, conn):  
     for country in country_lst:
         cur.execute('INSERT OR IGNORE INTO countries (country_id, country) VALUES (?, ?)', (country_lst.index(country), country))
@@ -402,7 +404,7 @@ unique_credit = convert_set(credit)
 # write_csv(all, "met_sample.csv")
 # write_csv(chicago,"chicago_sample.csv")
 
-cur, conn = setupDataBase("met.db")
+cur, conn = setupDataBase("museums.db")
 createtable(cur, conn)
 add_info(all, unique_both_countries, unique_credit, cur, conn)
 add_info_chic(chicago, unique_both_countries, unique_credit, cur, conn)
@@ -454,10 +456,6 @@ unknown_percent = str(round((total_unknown/total_all_credits) * 100, 2)) + "%"
 donation_percent = str(round((total_donation/total_all_credits) * 100, 2)) + "%"
 fund_percent = str(round((total_fund/total_all_credits) * 100, 2))+ "%"
 
-print(purchase_percent)
-print(total_purchase)
-print(total_all_credits)
-
 def calculated_data(num_met_us_origin, num_chicago_us_origin, num_met_not_us_origin, num_chicago_not_us_origin, filename):
     f = open(filename, "w")
     f.write("Number of pieces produced in the United States vs outside the United States")
@@ -499,8 +497,9 @@ fig = go.Figure(
     data = [
         go.Bar(name = "MET Art", x = x_values, y = y_values_met),
         go.Bar(name = "AIC Art", x = x_values, y = y_values_chicago)],
-        layout = dict(title = dict(text = "Number of pieces produced in the United States vs outside the United States"))
+        layout = dict(title = dict(text = "Number of Art pieces produced in the United States vs outside the United States"))
         )
+    
 fig.update_layout(barmode = "group")
 fig.show()
 
