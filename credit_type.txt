@@ -1,6 +1,0 @@
-Percentage of each type of credit for all art pieces
-Art pieces that were purchased: 10.5%
-Art pieces that were gifted: 22.0%
-Art pieces that have unknown credit: 20.5%
-Art pieces that were donated: 28.5%
-Art pieces that were given through a fund: 18.5%
