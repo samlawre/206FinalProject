@@ -1,0 +1,5 @@
+Number of pieces produced in the United States vs outside the United States
+Met pieces from the United States: 30
+Met pieces from outside the United States: 70
+Art Institute of Chicago pieces from the United States: 3
+Art Institute of Chicago pieces from outside the United States: 97
